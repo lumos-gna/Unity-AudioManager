@@ -7,23 +7,12 @@ using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
-    public static AudioManager Instance { get; private set; }
-
-    
     private const string AudioDataPath = "Audio";
     private Dictionary<string, AudioData> _audioDictionary;
     private ObjectPool<AudioManagedSource> _audioPool;
     
     private void Awake()
     {
-        if (Instance != null && Instance != this)
-        {
-            Destroy(gameObject);
-            return;
-        }
-        
-        Instance = this;
-        
         _audioDictionary = Resources.LoadAll<AudioData>(AudioDataPath).ToDictionary(x => x.key);
 
         _audioPool = new ObjectPool<AudioManagedSource>(
