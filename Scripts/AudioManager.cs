@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -10,10 +9,11 @@ public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
-    private const string AudioDataPath = "Audio";
     
+    private const string AudioDataPath = "Audio";
     private Dictionary<string, AudioData> _audioDictionary;
     private ObjectPool<AudioManagedSource> _audioPool;
+    
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -33,8 +33,7 @@ public class AudioManager : MonoBehaviour
             actionOnDestroy: (source) => Destroy(source.gameObject)
         );
     }
-
-
+    
     public void Play(string key)
     {
         if (_audioDictionary.ContainsKey(key))
@@ -44,6 +43,7 @@ public class AudioManager : MonoBehaviour
         }
     }
 
+    
     private AudioManagedSource CreateAudioSource()
     {
         var sourceObj = new GameObject("AudioSource");
@@ -59,11 +59,13 @@ public class AudioManager : MonoBehaviour
         return audioManagedSource;
     }
     
+    
     private void EnableAudioSource(AudioManagedSource source)
     {
         source.gameObject.SetActive(true);
     }
 
+    
     private void DisableAudioSource(AudioManagedSource source)
     {
         source.gameObject.SetActive(false);
