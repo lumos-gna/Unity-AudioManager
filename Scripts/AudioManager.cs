@@ -3,16 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Pool;
+using UnityEngine.SceneManagement;
 
 
 public class AudioManager : MonoBehaviour
 {
+    public static AudioManager Instance { get; private set; }
+
     private const string AudioDataPath = "Audio";
     
     private Dictionary<string, AudioData> _audioDictionary;
     private ObjectPool<AudioManagedSource> _audioPool;
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        
+        Instance = this;
+        
         _audioDictionary = Resources.LoadAll<AudioData>(AudioDataPath).ToDictionary(x => x.key);
 
         _audioPool = new ObjectPool<AudioManagedSource>(
@@ -23,13 +34,6 @@ public class AudioManager : MonoBehaviour
         );
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            Play("Test");
-        }
-    }
 
     public void Play(string key)
     {
@@ -40,15 +44,18 @@ public class AudioManager : MonoBehaviour
         }
     }
 
-    AudioManagedSource CreateAudioSource()
+    private AudioManagedSource CreateAudioSource()
     {
         var sourceObj = new GameObject("AudioSource");
-        
+
+        SceneManager.MoveGameObjectToScene(sourceObj, gameObject.scene);
+
         var audioSource = sourceObj.AddComponent<AudioSource>();
         
         var audioManagedSource = sourceObj.AddComponent<AudioManagedSource>();
         audioManagedSource.Init(audioSource, _audioPool);
         
+
         return audioManagedSource;
     }
     
